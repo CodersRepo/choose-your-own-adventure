@@ -335,8 +335,14 @@
 </div>
 
 <header class="game-header">
-  <div class="game-title">Last Light</div>
-  <div class="crew-status" id="crew-status"></div>
+  <div style="display:flex;flex-direction:column;gap:6px;">
+    <a href="index.html" style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-dim);text-decoration:none;opacity:0.6;transition:opacity 0.15s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">← Library</a>
+    <div class="game-title">Last Light</div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+    <div class="crew-status" id="crew-status"></div>
+    <div id="dev-panel" style="display:none;font-family:var(--mono);font-size:10px;letter-spacing:0.1em;color:#5b80c7;text-align:right;opacity:0.7;"></div>
+  </div>
 </header>
 
 <main>
@@ -1012,6 +1018,19 @@ function renderPage(pageId) {
 
   const actEl = document.getElementById('footer-act');
   if (actEl) actEl.textContent = ACT[page.act] || '';
+
+  // Dev mode panel — show cooperation score when ?dev=1 is in the URL
+  const devPanel = document.getElementById('dev-panel');
+  if (devPanel) {
+    const isDev = new URLSearchParams(window.location.search).get('dev') === '1';
+    devPanel.style.display = isDev ? 'block' : 'none';
+    if (isDev) {
+      devPanel.innerHTML =
+        `COOP: ${S.cooperation}/6 &nbsp;|&nbsp; ` +
+        `SIGNAL: ${S.investigatedSignal ? 'YES' : 'NO'} &nbsp;|&nbsp; ` +
+        `PAGE: ${pageId}`;
+    }
+  }
 
   const text    = resolveText(page);
   const choices = resolveChoices(page);

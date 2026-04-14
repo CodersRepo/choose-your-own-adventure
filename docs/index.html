@@ -3,98 +3,397 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Cave of Time — Choose Your Own Adventure</title>
+  <title>Choose Your Own Adventure — Story Library</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=EB+Garamond:ital,wght@0,400;1,400&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:        #1a1209;
+      --gold:       #a07820;
+      --gold-light: #c8a840;
+      --parchment:  #f5f0e8;
+      --space:      #050508;
+      --star-text:  #a8a8c1;
+      --blue-glow:  #5b80c7;
+    }
+
+    html { font-size: 17px; }
+
+    body {
+      min-height: 100vh;
+      background: #0d0d18;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: 'EB Garamond', Georgia, serif;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Star field background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 80px 40px, rgba(255,255,255,0.9), transparent),
+        radial-gradient(1px 1px at 200px 130px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1.5px 1.5px at 340px 80px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1px 1px at 500px 200px, rgba(255,255,255,0.5), transparent),
+        radial-gradient(1px 1px at 650px 60px, rgba(255,255,255,0.9), transparent),
+        radial-gradient(1px 1px at 780px 170px, rgba(255,255,255,0.7), transparent),
+        radial-gradient(2px 2px at 900px 100px, rgba(255,255,255,0.4), transparent),
+        radial-gradient(1px 1px at 100px 300px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1px 1px at 420px 350px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1.5px 1.5px at 600px 280px, rgba(255,255,255,0.5), transparent),
+        radial-gradient(1px 1px at 1100px 150px, rgba(255,255,255,0.7), transparent),
+        radial-gradient(1px 1px at 950px 320px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(circle at 50% 0%, rgba(30, 30, 80, 0.8) 0%, #0d0d18 70%);
+      background-size:
+        400px 400px, 600px 600px, 500px 500px, 700px 700px, 450px 450px,
+        800px 800px, 550px 550px, 350px 350px, 650px 650px, 500px 500px,
+        900px 900px, 750px 750px, 100% 100%;
+      background-attachment: fixed;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Header ── */
+    header {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 4rem 1.5rem 2.5rem;
+      max-width: 760px;
+      width: 100%;
+    }
+
+    .series-label {
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--star-text);
+      opacity: 0.6;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: clamp(1.6rem, 5vw, 2.6rem);
+      font-weight: 700;
+      color: #e4e4f4;
+      letter-spacing: 0.06em;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 40px rgba(91, 128, 199, 0.3);
+    }
+
+    .tagline {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--star-text);
+      opacity: 0.7;
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      width: 100%;
+      max-width: 760px;
+      padding: 0 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(91,128,199,0.3), transparent);
+    }
+    .divider-text {
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--star-text);
+      opacity: 0.4;
+      white-space: nowrap;
+    }
+
+    /* ── Story grid ── */
+    .story-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      width: 100%;
+      max-width: 760px;
+      padding: 0 1.5rem;
+    }
+
+    /* ── Story card ── */
+    .story-card {
+      display: block;
+      text-decoration: none;
+      border-radius: 4px;
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      position: relative;
+    }
+    .story-card:hover {
+      transform: translateY(-6px);
+    }
+
+    /* Cave of Time — parchment book card */
+    .card-cot {
+      background: #f5f0e8;
+      border: 1px solid #c8a880;
+      box-shadow: 4px 4px 0 #d4c9a8, 8px 8px 20px rgba(0,0,0,0.5);
+    }
+    .card-cot:hover {
+      box-shadow: 4px 4px 0 #c8a840, 8px 8px 30px rgba(200,168,64,0.3), 0 0 0 1px #c8a840;
+    }
+
+    /* Last Light — dark space card */
+    .card-lastlight {
+      background: rgba(13,13,23,0.95);
+      border: 1px solid #232336;
+      box-shadow: 0 0 0 0px transparent, 8px 8px 20px rgba(0,0,0,0.7);
+    }
+    .card-lastlight:hover {
+      box-shadow: 0 0 0 1px #5b80c7, 0 0 30px rgba(91,128,199,0.2), 8px 8px 20px rgba(0,0,0,0.7);
+      border-color: #5b80c7;
+    }
+
+    /* ── Card spine (left decoration) ── */
+    .card-spine {
+      position: absolute;
+      top: 0; bottom: 0; left: 0;
+      width: 6px;
+    }
+    .card-cot .card-spine    { background: linear-gradient(to bottom, #8b6914, #c8a840, #8b6914); }
+    .card-lastlight .card-spine { background: linear-gradient(to bottom, #232336, #5b80c7, #232336); }
+
+    /* ── Card inner ── */
+    .card-inner {
+      padding: 1.75rem 1.75rem 1.75rem 2rem;
+    }
+
+    .card-badge {
+      display: inline-block;
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.6rem;
+      border-radius: 2px;
+      margin-bottom: 1rem;
+    }
+    .card-cot .card-badge {
+      background: #2c1f0e;
+      color: #c8a840;
+    }
+    .card-lastlight .card-badge {
+      background: rgba(91,128,199,0.15);
+      color: #5b80c7;
+      border: 1px solid rgba(91,128,199,0.3);
+    }
+
+    .card-title {
+      font-family: 'Cinzel', Georgia, serif;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 0.6rem;
+    }
+    .card-cot .card-title {
+      font-size: 1.35rem;
+      color: #2c1f0e;
+    }
+    .card-lastlight .card-title {
+      font-size: 1.35rem;
+      color: #e4e4f4;
+      text-shadow: 0 0 20px rgba(91,128,199,0.4);
+    }
+
+    .card-subtitle {
+      font-size: 0.7rem;
+      font-family: 'Courier Prime', monospace;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+    .card-cot .card-subtitle      { color: #7a6855; }
+    .card-lastlight .card-subtitle { color: #545470; }
+
+    .card-desc {
+      font-size: 0.9rem;
+      line-height: 1.65;
+      margin-bottom: 1.5rem;
+    }
+    .card-cot .card-desc      { color: #4a3728; }
+    .card-lastlight .card-desc { color: #a8a8c1; }
+
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .card-tag {
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.5rem;
+      border-radius: 2px;
+    }
+    .card-cot .card-tag {
+      background: rgba(44,31,14,0.08);
+      color: #7a6855;
+      border: 1px solid rgba(44,31,14,0.12);
+    }
+    .card-lastlight .card-tag {
+      background: rgba(255,255,255,0.04);
+      color: #545470;
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .card-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.55rem 1.2rem;
+      border-radius: 2px;
+      transition: background 0.18s, box-shadow 0.18s;
+    }
+    .card-cot .card-cta {
+      background: #2c1f0e;
+      color: #f5f0e8;
+    }
+    .card-cot:hover .card-cta {
+      background: #8b6914;
+      box-shadow: 0 2px 8px rgba(139,105,20,0.4);
+    }
+    .card-lastlight .card-cta {
+      background: rgba(91,128,199,0.15);
+      color: #5b80c7;
+      border: 1px solid rgba(91,128,199,0.4);
+    }
+    .card-lastlight:hover .card-cta {
+      background: rgba(91,128,199,0.25);
+      box-shadow: 0 0 12px rgba(91,128,199,0.3);
+    }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      margin-top: 4rem;
+      padding: 1.5rem;
+      text-align: center;
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(168,168,193,0.3);
+      width: 100%;
+    }
+    footer a {
+      color: rgba(91,128,199,0.5);
+      text-decoration: none;
+    }
+    footer a:hover { color: rgba(91,128,199,0.8); }
+
+    @media (max-width: 500px) {
+      header { padding-top: 2.5rem; }
+      .story-grid { gap: 1.5rem; }
+      .card-inner { padding: 1.5rem 1.25rem 1.5rem 1.75rem; }
+    }
+  </style>
 </head>
 <body>
 
-  <!-- ── Loading screen ── -->
-  <div id="loading-screen" class="loading-screen" aria-live="polite">
-    <p>Opening the book&hellip;</p>
+  <header>
+    <p class="series-label">Interactive Fiction</p>
+    <h1>Choose Your Own Adventure</h1>
+    <p class="tagline">Two stories. Every choice is yours. Where will you end up?</p>
+  </header>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <span class="divider-text">Select a story</span>
+    <div class="divider-line"></div>
   </div>
 
-  <!-- ── Main app shell ── -->
-  <div id="app" class="app hidden">
+  <div class="story-grid">
 
-    <!-- Site header -->
-    <header class="site-header">
-      <div class="header-inner">
-        <div class="header-brand">
-          <span class="header-series">Choose Your Own Adventure</span>
-          <h1 class="header-title" id="story-title">The Cave of Time</h1>
+    <!-- Cave of Time -->
+    <a href="cot.html" class="story-card card-cot">
+      <div class="card-spine"></div>
+      <div class="card-inner">
+        <span class="card-badge">Classic · #1</span>
+        <h2 class="card-title">The Cave of Time</h2>
+        <p class="card-subtitle">Edward Packard · 1979</p>
+        <p class="card-desc">
+          A hike through Snake Canyon leads you into a cave that bends time itself. Every tunnel 
+          takes you to a different era — ancient Rome, the Ice Age, the far future. Choose wisely.
+        </p>
+        <div class="card-meta">
+          <span class="card-tag">111 pages</span>
+          <span class="card-tag">44 endings</span>
+          <span class="card-tag">Time travel</span>
+          <span class="card-tag">Classic CYOA</span>
         </div>
-        <div class="header-controls">
-          <button id="btn-restart" class="btn-control" title="Start the story over">↺ Restart</button>
-          <button id="btn-history" class="btn-control" title="Show your path through the story">☰ My Path</button>
-        </div>
+        <span class="card-cta">Open the book →</span>
       </div>
-    </header>
+    </a>
 
-    <!-- Path breadcrumb (collapsed by default) -->
-    <div id="path-panel" class="path-panel hidden" aria-label="Your path through the story">
-      <div class="path-panel-inner">
-        <span class="path-label">Your path:</span>
-        <ol id="path-list" class="path-list"></ol>
-        <button id="btn-close-path" class="btn-close-path" aria-label="Close path panel">✕</button>
+    <!-- Last Light -->
+    <a href="lastlight.html" class="story-card card-lastlight">
+      <div class="card-spine"></div>
+      <div class="card-inner">
+        <span class="card-badge">Original · New</span>
+        <h2 class="card-title">Last Light</h2>
+        <p class="card-subtitle">Original Story · 2026</p>
+        <p class="card-desc">
+          Earth's sun is dying. You command humanity's last mission to Planet Solace — 
+          a 15-year voyage into the dark with two crewmates and impossible choices at every turn.
+        </p>
+        <div class="card-meta">
+          <span class="card-tag">20 nodes</span>
+          <span class="card-tag">5 endings</span>
+          <span class="card-tag">Sci-fi</span>
+          <span class="card-tag">First contact</span>
+        </div>
+        <span class="card-cta">Begin mission →</span>
       </div>
-    </div>
+    </a>
 
-    <!-- Progress bar -->
-    <div class="progress-bar-track" aria-hidden="true">
-      <div id="progress-bar" class="progress-bar-fill"></div>
-    </div>
-
-    <!-- Main reading area -->
-    <main class="book-main">
-      <article id="book-page" class="book-page" aria-live="polite">
-
-        <!-- Page number badge -->
-        <div class="page-num-badge">
-          <span class="page-num-label">Page</span>
-          <span id="page-number" class="page-num-value"></span>
-        </div>
-
-        <!-- Story text -->
-        <div id="story-text" class="story-text"></div>
-
-        <!-- Choice section -->
-        <div id="choices-section" class="choices-section">
-          <div id="choices-list" class="choices-list" role="group" aria-label="Your choices"></div>
-        </div>
-
-        <!-- Ending section (hidden until terminal page) -->
-        <div id="ending-section" class="ending-section hidden">
-          <div class="ending-ornament">— The End —</div>
-          <div id="ending-path" class="ending-path"></div>
-          <button id="btn-ending-restart" class="btn-primary btn-restart-ending">Read Another Path</button>
-        </div>
-
-      </article>
-
-      <!-- Decisions counter -->
-      <div class="decisions-counter">
-        <span id="decisions-count">0</span> decision<span id="decisions-plural">s</span> made
-      </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="site-footer">
-      <p>Based on <em>The Cave of Time</em> by Edward Packard &middot; An interactive web reading experience</p>
-    </footer>
-
-  </div><!-- /#app -->
-
-  <!-- ── Error screen ── -->
-  <div id="error-screen" class="error-screen hidden">
-    <h2>Could not load story data.</h2>
-    <p id="error-message"></p>
-    <p><small>Make sure <code>story-data.json</code> is in the same directory as this page,
-    or run <code>python3 scripts/generate_web_data.py</code> to regenerate it.</small></p>
   </div>
 
-  <script src="reader.js"></script>
+  <footer>
+    <p>
+      <a href="https://github.com/CodersRepo/choose-your-own-adventure" target="_blank" rel="noopener">
+        GitHub Repository
+      </a>
+      &nbsp;·&nbsp; Built with AI assistance &nbsp;·&nbsp; 2026
+    </p>
+  </footer>
+
 </body>
 </html>
