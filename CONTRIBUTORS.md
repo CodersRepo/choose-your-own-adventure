@@ -4,7 +4,7 @@
 
 | Name | GitHub | Role |
 |---|---|---|
-| Dhruva Pyapali | [@DhruvaPyapali](https://github.com/DhruvaPyapali) | Team member |
+| Dhruva Pyapali | [@CodersRepo](https://github.com/CodersRepo) | Team member |
 | Aryan Khanna | [@aryank09](https://github.com/aryank09) | Team member |
 
 ## Original Project
