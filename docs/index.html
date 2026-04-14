@@ -1,1087 +1,289 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Last Light</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Last Light — Choose Your Own Adventure</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=EB+Garamond:ital,wght@0,400;1,400&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --bg: #050508;
-      --bg-radial: radial-gradient(circle at 50% 30%, #0d0d18 0%, #030305 100%);
-      --stars: radial-gradient(white, rgba(255,255,255,.2) 1px, transparent 1.5px);
-      --surface: rgba(13, 13, 23, 0.6);
-      --border: #232336;
-      --border-hover: #4e4e73;
-      --text: #a8a8c1;
-      --text-bright: #e4e4f4;
-      --text-dim: #545470;
-      --text-dimmer: #2f2f42;
-      --mono: 'Courier New', 'Lucida Console', monospace;
-      --serif: 'Merriweather', Georgia, 'Times New Roman', serif;
-      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
-      --alive: #4cc78e;
-      --injured: #d69538;
-      --dead: #9e3d3d;
-      --success: #4cc78e;
-      --partial: #d69538;
-      --failure: #9e3d3d;
-      --true-end: #5b80c7;
-      --glow-alive: rgba(76, 199, 142, 0.2);
-      --glow-injured: rgba(214, 149, 56, 0.2);
-      --glow-dead: rgba(158, 61, 61, 0.2);
-    }
-
-    html { scroll-behavior: smooth; }
+    html { font-size: 17px; }
 
     body {
-      background: var(--bg);
-      background-image: 
-        radial-gradient(1px 1px at 40px 60px, #ffffff, rgba(0,0,0,0)),
-        radial-gradient(1px 1px at 150px 100px, rgba(255,255,255,0.8), rgba(0,0,0,0)),
-        radial-gradient(1.5px 1.5px at 200px 300px, rgba(255,255,255,0.6), rgba(0,0,0,0)),
-        radial-gradient(1px 1px at 300px 50px, #ffffff, rgba(0,0,0,0)),
-        radial-gradient(2px 2px at 400px 200px, rgba(255,255,255,0.4), rgba(0,0,0,0)),
-        radial-gradient(1px 1px at 50px 250px, rgba(255,255,255,0.9), rgba(0,0,0,0)),
-        var(--bg-radial);
-      background-size: 300px 300px, 450px 450px, 200px 200px, 400px 400px, 500px 500px, 250px 250px, 100% 100%;
-      background-attachment: fixed;
-      color: var(--text);
-      font-family: var(--serif);
-      font-size: 18.5px;
-      line-height: 1.85;
       min-height: 100vh;
+      background: #0d0d18;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
+      font-family: 'EB Garamond', Georgia, serif;
       position: relative;
+      overflow-x: hidden;
     }
 
-    /* Scanlines effect */
-    body::after {
-      content: "";
+    /* Star field */
+    body::before {
+      content: '';
       position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: repeating-linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0) 0px,
-        rgba(0, 0, 0, 0) 2px,
-        rgba(0, 0, 0, 0.05) 3px
-      );
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 80px 40px,   rgba(255,255,255,0.9), transparent),
+        radial-gradient(1px 1px at 200px 130px,  rgba(255,255,255,0.6), transparent),
+        radial-gradient(1.5px 1.5px at 340px 80px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1px 1px at 500px 200px,  rgba(255,255,255,0.5), transparent),
+        radial-gradient(1px 1px at 650px 60px,   rgba(255,255,255,0.9), transparent),
+        radial-gradient(1px 1px at 780px 170px,  rgba(255,255,255,0.7), transparent),
+        radial-gradient(2px 2px at 900px 100px,  rgba(255,255,255,0.4), transparent),
+        radial-gradient(1px 1px at 100px 300px,  rgba(255,255,255,0.6), transparent),
+        radial-gradient(1px 1px at 420px 350px,  rgba(255,255,255,0.8), transparent),
+        radial-gradient(1.5px 1.5px at 600px 280px, rgba(255,255,255,0.5), transparent),
+        radial-gradient(1px 1px at 1100px 150px, rgba(255,255,255,0.7), transparent),
+        radial-gradient(1px 1px at 950px 320px,  rgba(255,255,255,0.6), transparent),
+        radial-gradient(circle at 50% 0%, rgba(30,30,80,0.8) 0%, #0d0d18 70%);
+      background-size:
+        400px 400px, 600px 600px, 500px 500px, 700px 700px, 450px 450px,
+        800px 800px, 550px 550px, 350px 350px, 650px 650px, 500px 500px,
+        900px 900px, 750px 750px, 100% 100%;
+      background-attachment: fixed;
       pointer-events: none;
-      z-index: 100;
+      z-index: 0;
     }
 
-    /* ── LAYOUT ── */
-    .game-header {
-      width: 100%;
-      max-width: 720px;
-      padding: 32px 24px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 16px;
-      z-index: 2;
-    }
-
-    .game-title {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .game-title::before {
-      content: "";
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      background-color: var(--text-dim);
-      border-radius: 50%;
-    }
-
-    .crew-status {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.08em;
-      text-align: right;
-      line-height: 1.8;
-      flex-shrink: 0;
-    }
-
-    .crew-alive  { color: var(--alive); text-shadow: 0 0 8px var(--glow-alive); }
-    .crew-injured { color: var(--injured); text-shadow: 0 0 8px var(--glow-injured); }
-    .crew-dead   { color: var(--dead); opacity: 0.8; text-shadow: 0 0 8px var(--glow-dead); text-decoration: line-through; text-decoration-color: rgba(158, 61, 61, 0.5); }
-
-    main {
-      width: 100%;
-      max-width: 720px;
-      padding: 56px 24px 80px;
-      flex: 1;
-      z-index: 2;
-    }
-
-    .game-footer {
-      width: 100%;
-      max-width: 720px;
-      padding: 20px 24px 32px;
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--text-dimmer);
-      border-top: 1px solid rgba(255,255,255,0.03);
-      display: flex;
-      justify-content: space-between;
-      z-index: 2;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    /* ── PAGE CONTENT ── */
-    .page-wrap {
-      animation: appear 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-    }
-
-    @keyframes appear {
-      from { opacity: 0; transform: translateY(12px); filter: blur(4px); }
-      to   { opacity: 1; transform: translateY(0); filter: blur(0); }
-    }
-
-    .act-label {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      margin-bottom: 24px;
-      display: inline-block;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 8px;
-    }
-
-    .page-title {
-      font-size: 26px;
-      font-weight: normal;
-      color: var(--text-bright);
-      margin-bottom: 40px;
-      letter-spacing: 0.02em;
-      line-height: 1.3;
-    }
-
-    .page-text {
-      color: var(--text);
-      margin-bottom: 56px;
-    }
-
-    .page-text p { margin-bottom: 1.5em; }
-    .page-text p:last-child { margin-bottom: 0; }
-    .page-text em { color: var(--text-bright); font-style: italic; letter-spacing: 0.01em; }
-
-    /* ── CHOICES ── */
-    .choices {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    /* ── Main content ── */
+    .hero {
       position: relative;
-    }
-
-    .choices::before {
-      content: "";
-      position: absolute;
-      left: -20px;
-      top: 8px;
-      bottom: 8px;
-      width: 1px;
-      background: linear-gradient(to bottom, transparent, var(--border), transparent);
-    }
-
-    .choice-btn {
-      background: rgba(13, 13, 23, 0.4);
-      border: 1px solid var(--border);
-      color: #9898b0;
-      padding: 16px 24px;
-      text-align: left;
-      cursor: pointer;
-      font-size: 16px;
-      font-family: var(--sans);
-      line-height: 1.5;
-      transition: all 0.25s ease;
-      border-radius: 4px;
-      position: relative;
-      overflow: hidden;
-      backdrop-filter: blur(4px);
-    }
-
-    .choice-btn::before {
-      content: "";
-      position: absolute;
-      left: 0; top: 0; bottom: 0; width: 3px;
-      background: var(--text-dim);
-      transition: background 0.25s ease, width 0.25s ease;
-    }
-
-    .choice-btn:hover {
-      border-color: var(--border-hover);
-      color: var(--text-bright);
-      background: rgba(255,255,255,0.03);
-      transform: translateX(4px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-
-    .choice-btn:hover::before {
-      background: var(--text-bright);
-      width: 4px;
-    }
-
-    .choice-btn:active {
-      background: rgba(255,255,255,0.05);
-      transform: translateX(2px);
-    }
-
-    /* ── ENDINGS ── */
-    .ending-label {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      margin-bottom: 16px;
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 2px;
-      background: rgba(0,0,0,0.3);
-    }
-
-    .ending-label.failure  { color: var(--failure); border: 1px solid rgba(158, 61, 61, 0.3); box-shadow: 0 0 10px var(--glow-dead); }
-    .ending-label.partial  { color: var(--partial); border: 1px solid rgba(214, 149, 56, 0.3); box-shadow: 0 0 10px var(--glow-injured); }
-    .ending-label.success  { color: var(--success); border: 1px solid rgba(76, 199, 142, 0.3); box-shadow: 0 0 10px var(--glow-alive); }
-    .ending-label.true-end { color: #a4c2f4; border: 1px solid rgba(91, 128, 199, 0.3); box-shadow: 0 0 12px rgba(91,128,199,0.3); }
-
-    .ending-title {
-      font-size: 32px;
-      font-weight: normal;
-      color: #fff;
-      margin-bottom: 40px;
-      letter-spacing: 0.02em;
-    }
-
-    .ending-divider {
-      width: 64px;
-      height: 1px;
-      background: linear-gradient(90deg, var(--border-hover), transparent);
-      margin: 48px 0;
-    }
-
-    .restart-btn {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-dim);
-      padding: 12px 28px;
-      cursor: pointer;
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      transition: all 0.2s ease;
-      border-radius: 2px;
-    }
-
-    .restart-btn:hover {
-      border-color: var(--border-hover);
-      color: var(--text-bright);
-      background: rgba(255,255,255,0.03);
-    }
-
-    /* ── DECORATIVE STICKERS ── */
-    .stickers {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      pointer-events: none;
       z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 3rem 1.5rem 2rem;
+      max-width: 560px;
+      width: 100%;
+    }
+
+    .series-label {
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #545470;
+      margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: clamp(2.4rem, 8vw, 4rem);
+      font-weight: 700;
+      color: #e4e4f4;
+      letter-spacing: 0.08em;
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+      text-shadow:
+        0 0 60px rgba(91,128,199,0.5),
+        0 0 120px rgba(91,128,199,0.2);
+    }
+
+    .subtitle {
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #5b80c7;
+      margin-bottom: 2rem;
+      opacity: 0.8;
+    }
+
+    .tagline {
+      font-style: italic;
+      font-size: 1.05rem;
+      color: #a8a8c1;
+      line-height: 1.7;
+      max-width: 420px;
+      margin-bottom: 2.5rem;
+      opacity: 0.8;
+    }
+
+    /* ── Story card ── */
+    .story-card {
+      display: block;
+      text-decoration: none;
+      width: 100%;
+      max-width: 460px;
+      background: rgba(13,13,23,0.95);
+      border: 1px solid #232336;
+      border-radius: 4px;
       overflow: hidden;
+      position: relative;
+      box-shadow: 0 0 40px rgba(91,128,199,0.08), 0 8px 32px rgba(0,0,0,0.6);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .story-card:hover {
+      transform: translateY(-5px);
+      border-color: #5b80c7;
+      box-shadow: 0 0 0 1px #5b80c7, 0 0 40px rgba(91,128,199,0.25), 0 12px 40px rgba(0,0,0,0.7);
     }
 
-    .sticker {
+    /* Left glow spine */
+    .card-spine {
       position: absolute;
-      opacity: 0.18;
-      filter: saturate(0.8);
-      user-select: none;
-      animation: float-sticker 6s ease-in-out infinite;
+      top: 0; bottom: 0; left: 0;
+      width: 3px;
+      background: linear-gradient(to bottom, #232336, #5b80c7, #232336);
+      transition: opacity 0.25s;
+    }
+    .story-card:hover .card-spine { opacity: 1; }
+
+    .card-inner {
+      padding: 1.75rem 1.75rem 1.75rem 1.9rem;
+      text-align: left;
     }
 
-    @keyframes float-sticker {
-      0%, 100% { transform: translateY(0) rotate(var(--rot)); }
-      50% { transform: translateY(-12px) rotate(calc(var(--rot) + 6deg)); }
+    .card-badge {
+      display: inline-block;
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.6rem;
+      border-radius: 2px;
+      background: rgba(91,128,199,0.12);
+      color: #5b80c7;
+      border: 1px solid rgba(91,128,199,0.25);
+      margin-bottom: 1rem;
     }
 
-    .sticker-1 { top: 12%; left: 8%;  --rot: -15deg; animation-delay: 0s;  font-size: 42px; }
-    .sticker-2 { top: 65%; left: 6%;  --rot: 12deg;  animation-delay: -2s; font-size: 54px; }
-    .sticker-3 { top: 18%; right: 9%; --rot: 25deg;  animation-delay: -4s; font-size: 46px; }
-    .sticker-4 { top: 70%; right: 8%; --rot: -22deg; animation-delay: -1s; font-size: 58px; }
-    .sticker-5 { top: 88%; left: 45%; --rot: 8deg;   animation-delay: -3s; font-size: 32px; opacity: 0.12; }
+    .card-title {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #e4e4f4;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 20px rgba(91,128,199,0.3);
+    }
+
+    .card-byline {
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      color: #545470;
+      margin-bottom: 1rem;
+    }
+
+    .card-desc {
+      font-size: 0.92rem;
+      line-height: 1.65;
+      color: #a8a8c1;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-bottom: 1.5rem;
+    }
+    .card-tag {
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.5rem;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.04);
+      color: #545470;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .card-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.3rem;
+      border-radius: 2px;
+      background: rgba(91,128,199,0.14);
+      color: #5b80c7;
+      border: 1px solid rgba(91,128,199,0.35);
+      transition: background 0.18s, box-shadow 0.18s;
+    }
+    .story-card:hover .card-cta {
+      background: rgba(91,128,199,0.24);
+      box-shadow: 0 0 14px rgba(91,128,199,0.3);
+    }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      margin-top: 3rem;
+      padding-bottom: 2rem;
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(168,168,193,0.25);
+      text-align: center;
+    }
+    footer a {
+      color: rgba(91,128,199,0.4);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    footer a:hover { color: rgba(91,128,199,0.7); }
+
+    @media (max-width: 480px) {
+      h1 { font-size: 2.4rem; }
+      .card-inner { padding: 1.5rem 1.25rem 1.5rem 1.5rem; }
+    }
   </style>
 </head>
 <body>
 
-<div class="stickers">
-  <div class="sticker sticker-1">🚀</div>
-  <div class="sticker sticker-2">🪐</div>
-  <div class="sticker sticker-3">🛰️</div>
-  <div class="sticker sticker-4">☄️</div>
-  <div class="sticker sticker-5">⭐</div>
-</div>
+  <div class="hero">
+    <p class="series-label">Choose Your Own Adventure</p>
+    <h1>Last Light</h1>
+    <p class="subtitle">Original Story &nbsp;·&nbsp; 2026</p>
+    <p class="tagline">
+      Earth's sun is dying. You command humanity's final mission —
+      a 15-year voyage into deep space with two crewmates and no way back.
+    </p>
 
-<header class="game-header">
-  <div class="game-title">Last Light</div>
-  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
-    <div class="crew-status" id="crew-status"></div>
-    <div id="dev-panel" style="display:none;font-family:var(--mono);font-size:10px;letter-spacing:0.1em;color:#5b80c7;text-align:right;opacity:0.7;"></div>
+    <a href="lastlight.html" class="story-card">
+      <div class="card-spine"></div>
+      <div class="card-inner">
+        <span class="card-badge">New &nbsp;·&nbsp; Original</span>
+        <h2 class="card-title">Begin Mission</h2>
+        <p class="card-byline">Planet Solace &nbsp;·&nbsp; KOI-3284b &nbsp;·&nbsp; Star HR 7672</p>
+        <p class="card-desc">
+          You are the commander of the <em>Helios</em>. Your crewmates — Yusuf Osei and Mara Chen — 
+          are counting on you. Every decision matters. Not all of you may make it home.
+        </p>
+        <div class="card-meta">
+          <span class="card-tag">20 nodes</span>
+          <span class="card-tag">5 endings</span>
+          <span class="card-tag">Crew survival</span>
+          <span class="card-tag">First contact</span>
+          <span class="card-tag">Gritty sci-fi</span>
+        </div>
+        <span class="card-cta">Launch mission →</span>
+      </div>
+    </a>
   </div>
-</header>
 
-<main>
-  <div id="page-root"></div>
-</main>
+  <footer>
+    <a href="https://github.com/CodersRepo/choose-your-own-adventure" target="_blank" rel="noopener">
+      GitHub
+    </a>
+    &nbsp;·&nbsp; Built with AI &nbsp;·&nbsp; 2026
+  </footer>
 
-<footer class="game-footer">
-  <span>Last Light — A Choose Your Own Adventure</span>
-  <span id="footer-act"></span>
-</footer>
-
-<script>
-'use strict';
-
-// ────────────────────────────────────────────────────────────
-// STATE
-// ────────────────────────────────────────────────────────────
-
-let S = {};
-
-function resetState() {
-  S = {
-    page: 'p01',
-    yusuf: 'alive',      // 'alive' | 'injured' | 'dead'
-    mara: 'alive',       // 'alive' | 'dead'
-    cooperation: 0,      // 0–6; ≥3 + signal + both alive = True Ending
-    resources: null,     // 'bio' | 'eng' | 'balanced'
-    irradiated: false,
-    investigatedSignal: false,
-  };
-}
-
-resetState();
-
-// ────────────────────────────────────────────────────────────
-// STORY DATA
-// ────────────────────────────────────────────────────────────
-
-const ACT = {
-  1: 'Act I — Departure',
-  2: 'Act II — The Journey',
-  3: 'Act III — Arrival',
-  4: 'Act IV',
-};
-
-/*
-  Each page object can have:
-    act        : number
-    title      : string
-    text       : string  (static HTML)
-    textFn     : state → string
-    choices    : [{text, target, effect?}]
-    choicesFn  : state → [{text, target, effect?}]
-    enter      : state → void   (runs before render; modifies state in place)
-    isEnding   : bool
-    endingType : 'failure' | 'partial' | 'success' | 'true-end'
-    endingLabel: string
-*/
-
-const PAGES = {
-
-  // ── ACT 1: DEPARTURE ──────────────────────────────────────
-
-  p01: {
-    act: 1,
-    title: 'The Briefing',
-    text: `
-      <p>The sun went first. Quietly, on a Tuesday, while the markets were open and children were eating lunch. The solar irradiance measurements had been trending wrong for eleven years before anyone in authority said the word <em>irreversible</em> out loud.</p>
-      <p>You've had six weeks since they showed you the files. Six weeks to accept a mission with no return clause, to pack a bag they said should weigh no more than four kilograms of personal items, and to stop looking at photographs.</p>
-      <p>The briefing room smells like recycled air and coffee that's been warming too long. General Vasquez slides a folder across the table. Your name is on the cover.</p>
-      <p>"Fifteen years," she says. "One-way trip. Three of you. If Planet Solace is what the models suggest, your probe data gives Earth a fighting chance at evacuation planning."</p>
-      <p>You look at the folder. You don't open it.</p>
-      <p>"If it isn't?" you ask.</p>
-      <p>"Then we'll know that too."</p>
-    `,
-    choices: [
-      { text: 'Accept the mission.', target: 'p02' },
-    ],
-  },
-
-  p02: {
-    act: 1,
-    title: 'Crew & Cargo',
-    text: `
-      <p>Yusuf Osei finds you in the equipment bay. He's the kind of person who checks systems he didn't install, just to be sure. His hands are always moving — tightening, testing, tracing connections — the way some people drum their fingers, but with intent.</p>
-      <p>"You're Commander?" No ceremony. You like that. His handshake is brief and certain.</p>
-      <p>Mara Chen is already cataloguing the biology equipment when you introduce yourself. She has a small recorder clipped to her collar that she talks into when she thinks no one's listening.</p>
-      <p>"She keeps a voice journal," Yusuf tells you later. "Addresses it to her sister." He says it without judgment. You file it away.</p>
-      <p>There is one decision left before launch. The ship has room for a full complement of either medical and biological research gear or engineering backup systems — not both at maximum specification. You can split the allocation evenly, but depth suffers across the board.</p>
-    `,
-    choices: [
-      {
-        text: 'Prioritize the medical and biological research supplies. The planet assessment depends on it.',
-        target: 'p03',
-        effect: s => { s.resources = 'bio'; },
-      },
-      {
-        text: 'Prioritize engineering repair kits and redundant systems. The journey depends on it.',
-        target: 'p03',
-        effect: s => { s.resources = 'eng'; },
-      },
-      {
-        text: 'Split the cargo evenly. Compromise depth for coverage.',
-        target: 'p03',
-        effect: s => { s.resources = 'balanced'; },
-      },
-    ],
-  },
-
-  p03: {
-    act: 1,
-    title: 'Launch',
-    text: `
-      <p>The last transmission from Ground Control is calm and professional until the very end, when Mission Director Okafor pauses for three full seconds before signing off. In those three seconds you hear everything she can't say.</p>
-      <p>Liftoff is textbook. You watch Earth's curvature fill the observation panel, then the whole planet, then something small enough to cover with your thumb.</p>
-      <p>Nobody speaks for a long time.</p>
-      <p>"Fifteen years," Mara says finally. She's not talking to you. Her recorder is on.</p>
-      <p>Yusuf runs a systems diagnostic he doesn't need. His hands are busy.</p>
-      <p>You set the heading for Planet Solace — catalog designation KOI-3284b, orbiting a stable star fifteen light-years from home. The ship moves into the dark.</p>
-      <p>You don't look back.</p>
-    `,
-    choices: [
-      { text: 'Continue.', target: 'p04' },
-    ],
-  },
-
-  // ── ACT 2: THE JOURNEY ────────────────────────────────────
-
-  p04: {
-    act: 2,
-    title: 'Year 3 — The Breach',
-    text: `
-      <p>The three-pulse alarm. You've rehearsed this. Nothing about rehearsal prepares you for it at 0340 ship time, half-awake in your bunk, the sound bouncing through the hull like a physical thing.</p>
-      <p>Hairline fracture in the oxygen recycler's secondary housing. Stress fracture from thermal cycling — third year running. Yusuf is already in the maintenance corridor, suit half-donned, running his fingers over the breach with the methodical calm of someone who grew up fixing things by touch.</p>
-      <p>"I can patch it from outside," he says. "Twenty minutes EVA, maybe less."</p>
-      <p>The fracture is at an awkward junction angle. One wrong move and the seal blows before the patch sets.</p>
-    `,
-    choices: [
-      {
-        text: '"Stand back. I\'m going EVA."',
-        target: 'p04_you',
-      },
-      {
-        text: '"I\'ve got your line. Take your time out there."',
-        target: 'p04_yusuf',
-      },
-    ],
-  },
-
-  p04_you: {
-    act: 2,
-    title: 'Year 3 — Outside',
-    text: `
-      <p>You take the suit from him. He doesn't argue. He watches your face, reads that this isn't an order — it's a choice — and he respects the distinction.</p>
-      <p>The EVA is bad in the quiet way that bad things are. Cold metal through the gloves. The ship enormous and indifferent. You work by feel and by the schematic Yusuf walks you through over comms, his voice steady, precise, patient in a way that makes the job easier than it has any right to be.</p>
-      <p>When the patch holds, he says: "Clean work, Commander."</p>
-      <p>Back inside, Mara runs a scan. Seal integrity: 99.7%. You file the incident report and don't mention your hands shaking.</p>
-    `,
-    choices: [
-      { text: 'Continue.', target: 'p05' },
-    ],
-  },
-
-  p04_yusuf: {
-    act: 2,
-    title: 'Year 3 — Outside',
-    enter(s) {
-      if (s.resources !== 'eng') s.yusuf = 'injured';
-    },
-    textFn(s) {
-      if (s.resources === 'eng') {
-        return `
-          <p>Yusuf goes. He has the titanium patch kit — one of the items you prioritized in the cargo manifest — and his hands move with the confidence of someone who always has the right tool. Eighteen minutes. Clean seal. He comes back inside without ceremony.</p>
-          <p>"Good kit," he says, hanging up the suit.</p>
-          <p>Mara checks the seal the next morning without being asked. 99.8% integrity. She doesn't say anything, but she nods.</p>
-        `;
-      }
-      return `
-        <p>Yusuf goes. The patch kit available isn't rated for this junction — the alloy-weave wrap works, but the angle forces him to brace against the hull in a way that puts sustained pressure on his left hand. He doesn't mention it until Mara runs the post-EVA scan.</p>
-        <p>"Contusion on the metacarpals," she says. "Some micro-fracturing in the carpal tunnel. It'll probably heal fully." She looks at Yusuf. "You should rest the hand."</p>
-        <p>Yusuf opens and closes his left hand twice, looks at it, and goes back to the maintenance bay.</p>
-        <p>He doesn't rest the hand.</p>
-      `;
-    },
-    choices: [
-      { text: 'Continue.', target: 'p05' },
-    ],
-  },
-
-  p05: {
-    act: 2,
-    title: 'Year 7 — Signal',
-    text: `
-      <p>It appears at the edge of your sensor range — a faint electromagnetic pattern, repeating on a twelve-second interval. Mara thinks it's geological resonance. Yusuf thinks it isn't. He brings up the spectral readout and points without saying anything.</p>
-      <p>The pattern is mathematically structured. Not a message, exactly. Not clearly. But not random.</p>
-      <p>A course deviation to investigate would cost eleven days and a measurable fraction of your fuel reserve. Arrival at Planet Solace would be delayed but within acceptable parameters.</p>
-    `,
-    choices: [
-      {
-        text: '"Alter course. We investigate."',
-        target: 'p05a',
-        effect: s => { s.cooperation++; s.investigatedSignal = true; },
-      },
-      {
-        text: '"Log it and maintain heading. We have a mission."',
-        target: 'p06',
-      },
-    ],
-  },
-
-  p05a: {
-    act: 2,
-    title: 'Year 7 — The Trace',
-    text: `
-      <p>The source is a debris field — ancient, drifting on a vector that traces back, if you extend the line far enough, toward the general direction of KOI-3284b. Planet Solace.</p>
-      <p>The material composition is nothing in the database. Not a comet. Not a human-made object. Not anything catalogued.</p>
-      <p>Mara is very still. Yusuf runs the analysis twice.</p>
-      <p>"Something came from there," he says. He means the planet. He doesn't say the rest of it.</p>
-      <p>You document everything. Seventeen gigabytes of spectral data. Mara tags the files with an asterisk and doesn't sleep for the next two days.</p>
-      <p>You resume course. The debris field falls behind you.</p>
-    `,
-    choices: [
-      { text: 'Continue.', target: 'p06' },
-    ],
-  },
-
-  p06: {
-    act: 2,
-    title: 'Year 12 — Rationing',
-    text: `
-      <p>Mara brings it to you first, privately. She's been tracking the consumption logs.</p>
-      <p>Yusuf has been skipping his own rations — quietly, systematically, for at least four months. Not enough to compromise his function, but enough that it shows up in the numbers. He hasn't said anything.</p>
-      <p>"He's trying to stretch the supply," Mara says. She doesn't look comfortable with how she found out. "His projections account for a fuel correction we haven't made yet. He thinks we're running low."</p>
-      <p>She sets a rebalancing proposal on your desk. It redistributes the remaining calories with more precision, accounting for individual metabolic needs.</p>
-      <p>Or you enforce strict equal rationing. No exceptions, no acknowledgment. Nobody's math is special.</p>
-    `,
-    choices: [
-      {
-        text: '"Equal rations. No exceptions. I\'ll handle Yusuf."',
-        target: 'p07',
-      },
-      {
-        text: '"Mara\'s rebalancing plan is sound. Adjust the manifest."',
-        target: 'p06a',
-        effect: s => { s.cooperation++; },
-      },
-    ],
-  },
-
-  p06a: {
-    act: 2,
-    title: 'Year 12 — Adjustment',
-    text: `
-      <p>You implement Mara's plan. Yusuf reads the updated manifest that evening and comes to find you.</p>
-      <p>He stands in the doorway of the navigation bay for a moment before he speaks. "You didn't have to do it officially."</p>
-      <p>"I know."</p>
-      <p>He nods once. That's the whole conversation. But over the following weeks you notice him eating without watching the clock, and his hand — the injured one, if it came to that — has started to recover.</p>
-    `,
-    choices: [
-      { text: 'Continue.', target: 'p07' },
-    ],
-  },
-
-  p07: {
-    act: 2,
-    title: 'Year 14 — The Storm',
-    text: `
-      <p>The particle storm hits without warning. A charged front, dense enough to blow the engine coupling and fry every active system on the ship if the housing isn't shielded from outside. Your internal shielding wasn't designed for this. Nothing out here was.</p>
-      <p>There is one suit rated for it. One. The storm will last approximately ninety minutes.</p>
-      <p>Yusuf is already reading the outside radiation levels. Mara is checking the suit seals. Both of them are ready to go. Both of them know what ninety minutes in that storm might mean.</p>
-      <p>You can also tell both of them to stand down and send yourself.</p>
-    `,
-    choices: [
-      {
-        text: '"Yusuf. Suit up."',
-        target: 'p07_yusuf',
-      },
-      {
-        text: '"Mara. You have the suit."',
-        target: 'p07_mara',
-      },
-      {
-        text: '"Neither of you. Stand down. I\'m going."',
-        target: 'p07_you',
-        effect: s => { s.irradiated = true; s.cooperation++; },
-      },
-      {
-        text: 'Hold position. Weather the storm from inside.',
-        target: 'e1_lost',
-      },
-    ],
-  },
-
-  p07_yusuf: {
-    act: 2,
-    title: 'Year 14 — Ninety Minutes',
-    enter(s) {
-      const dies = s.yusuf === 'injured' && s.cooperation < 2;
-      if (dies) s.yusuf = 'dead';
-    },
-    textFn(s) {
-      if (s.yusuf === 'dead') {
-        return `
-          <p>Yusuf takes the suit without hesitation. His left hand — the one that never fully healed — works the seals with practiced efficiency. He doesn't show you that it costs him something.</p>
-          <p>He's outside for forty-seven minutes when his comms go to static. Not a suit failure. Mara pulls the sensor data later. A secondary surge — unexpected, unforecast — hit the outer hull precisely when he was at the most exposed junction.</p>
-          <p>You go out to get him when the storm passes. He's still tethered to the ship. His hands are still on the housing he was shielding.</p>
-          <p>The engine is intact.</p>
-          <p>You carry him in. Mara doesn't say anything for a very long time. Her recorder is in her pocket, and she doesn't take it out.</p>
-        `;
-      }
-      return `
-        <p>Yusuf takes the suit without hesitation. Ninety-three minutes later he comes back inside, moves to the sink, and washes his face for a long time without saying anything.</p>
-        <p>"Engine's fine," he says eventually. "Secondary coupling held."</p>
-        <p>Mara hands him a protein pack and a thermal sleeve for his hand. He takes both.</p>
-      `;
-    },
-    choices: [
-      { text: 'Continue.', target: 'p08' },
-    ],
-  },
-
-  p07_mara: {
-    act: 2,
-    title: 'Year 14 — Ninety Minutes',
-    text: `
-      <p>Mara takes the suit. She spends forty seconds checking the seals, then clips her recorder to her belt with the strap she never uses, and goes.</p>
-      <p>Ninety-one minutes. The ship holds. When she comes back in, she takes off the suit in silence and sits on the equipment locker for a while without moving.</p>
-      <p>You give her the space. Yusuf makes something hot and puts it beside her without comment.</p>
-      <p>She'll be fine. But the event doesn't leave her. You see it in her sleep patterns for months afterward — the times she wakes early and talks into the recorder in a voice too low to hear.</p>
-    `,
-    choices: [
-      { text: 'Continue.', target: 'p08' },
-    ],
-  },
-
-  p07_you: {
-    act: 2,
-    title: 'Year 14 — Ninety Minutes',
-    text: `
-      <p>Both of them argue. Yusuf says it should be him. Mara says she's already checked the suit. You tell them both, with a tone you don't use often, to stand down.</p>
-      <p>The storm is worse than the numbers suggested. You know within the first ten minutes that you're absorbing more radiation than the suit was rated for. You don't tell them that over comms.</p>
-      <p>Ninety-four minutes. The engine holds. You come back inside and let Mara run the scan without protest.</p>
-      <p>She reads the results. She doesn't say what they mean out loud. She writes something in her medical log, shows it to you privately, and asks you to sign the acknowledgment.</p>
-      <p>You sign it.</p>
-      <p>The three of you don't discuss it further. There are eight more months until Planet Solace.</p>
-    `,
-    choices: [
-      { text: 'Continue.', target: 'p08' },
-    ],
-  },
-
-  // ── ACT 3: ARRIVAL ────────────────────────────────────────
-
-  p08: {
-    act: 3,
-    title: 'Year 15 — Approach',
-    text: `
-      <p>Planet Solace fills the forward display. It is unremarkable from orbit — blue-green-gray, cloud cover, a moon smaller than ours. It looks like something a child drew when asked to draw a planet where things might live.</p>
-      <p>Mara has atmospheric composition on a second display. Nitrogen, oxygen, trace noble gases. Breathable. At sea level, she says. With time for adjustment.</p>
-      <p>Yusuf runs the landing approach calculation three times. The third time, he prints it and posts it to the wall.</p>
-      <p>"We're here," he says.</p>
-      <p>For a moment no one says anything else. You think about Earth. You think about General Vasquez's three-second pause. You think about the probe in cargo bay two, loaded and ready, waiting for the data that will justify all of this.</p>
-      <p>You begin descent.</p>
-    `,
-    choices: [
-      { text: 'Begin the landing sequence.', target: 'p09' },
-    ],
-  },
-
-  p09: {
-    act: 3,
-    title: 'First Steps',
-    text: `
-      <p>The surface is harder than the models predicted. The soil is mineral-rich, dense, layered. Mara takes a sample within thirty seconds of the hatch opening and is already cross-referencing it against the pre-mission database.</p>
-      <p>The atmosphere is thin. Cold. Breathable for limited periods before the suit's supplemental system kicks in. Mara notes this without looking up from her sample.</p>
-      <p>The sky is the color of old pewter. The light is different here — no sun to speak of, just the star's diffuse glow through thick cloud cover. Everything is slightly wrong in a way that will take time to place.</p>
-      <p>Yusuf is setting up the base camp perimeter with quiet efficiency. You're about to begin the terrain survey when he stops.</p>
-      <p>He points to the north.</p>
-    `,
-    choices: [
-      { text: 'Look.', target: 'p10' },
-    ],
-  },
-
-  p10: {
-    act: 3,
-    title: 'The Markings',
-    text: `
-      <p>The rock face is basalt, or something close to it. The markings begin low — knee-height on a human — and run upward for approximately two meters. Regular spacing. Repeating geometric units. Not scratched. Carved, with precision and patience, into stone that Mara's dating device puts at somewhere between forty and eighty years old.</p>
-      <p>Forty years ago, something stood here and made these.</p>
-      <p>Mara photographs every centimeter. Yusuf makes no sound. You read the three of you — your own held breath, Yusuf's stillness, Mara's hands that have stopped moving — and you understand what this moment is.</p>
-      <p>There is something here. There has been something here.</p>
-    `,
-    choices: [
-      {
-        text: '"Leave the area undisturbed. Set markers and fall back to the ship."',
-        target: 'p11',
-        effect: s => { s.cooperation++; },
-      },
-      {
-        text: '"Document everything carefully. Then we continue the survey."',
-        target: 'p11',
-      },
-      {
-        text: '"Unknown intelligence, potential threat. Set up a defensive perimeter."',
-        target: 'p10_defense',
-        effect: s => { s.cooperation--; },
-      },
-    ],
-  },
-
-  p10_defense: {
-    act: 3,
-    title: 'Perimeter',
-    enter(s) {
-      if (s.cooperation < 0) s.mara = 'dead';
-    },
-    textFn(s) {
-      if (s.mara === 'dead') {
-        return `
-          <p>You set up the perimeter. Automated proximity sensors, a wide arc, motion-triggered lights. Standard protocol for unknown-intelligence contact, as written by people who had never been in the situation.</p>
-          <p>Mara is fifty meters ahead when the nearest sensor misfires — triggered by a small animal, probably, something that bolted at the lights. The alarm fires. The defensive charge, set to deter, not to harm, discharges across the rock face where she's working.</p>
-          <p>You reach her in forty seconds. It isn't fast enough.</p>
-          <p>She lived for the science. She was trying to get one more soil sample when it happened. The recorder is still clipped to her collar. It's still running.</p>
-          <p>You don't stop it.</p>
-        `;
-      }
-      return `
-        <p>You set up the perimeter. Automated proximity sensors, motion-triggered lights. Standard protocol.</p>
-        <p>Nothing approaches. Nothing responds. The markings sit in the darkness beyond the sensor arc, and if anything out there is watching, it watches from a distance you can't close.</p>
-        <p>Mara takes what samples she can from the perimeter's edge. The survey will be limited by what you can reach from inside it. She doesn't say this out loud, but the numbers will say it later.</p>
-      `;
-    },
-    choices: [
-      { text: 'Continue the survey.', target: 'p11' },
-    ],
-  },
-
-  p11: {
-    act: 3,
-    title: 'The Data',
-    textFn(s) {
-      const trueEnd = s.mara === 'alive' && s.yusuf === 'alive'
-                   && s.cooperation >= 3 && s.investigatedSignal;
-      if (trueEnd) {
-        return `
-          <p>The survey takes eleven days. Mara works without stopping, or close to it. The planet's biology is alien in the ways that matter and familiar in the ways that mean something — there's a water cycle, photosynthesis-equivalent chemistry in the soil microbes, enough to build on.</p>
-          <p>The probe data will be extraordinary.</p>
-          <p>You're completing the final atmospheric readings on day twelve when Mara grabs your arm.</p>
-          <p>Something is in the tree line. Has been there, you realize, for some time. It's small — smaller than you expected anything to be. It stands at the edge of the trees the way something stands when it is afraid but has decided, despite the fear, not to leave.</p>
-          <p>It's looking at you.</p>
-        `;
-      }
-      return `
-        <p>The survey takes eleven days. Mara works methodically, documenting everything — soil composition, atmospheric chemistry, microbial activity in the subsurface samples. The data is building into something remarkable.</p>
-        <p>On the eighth day, you see movement at the edge of your sensor range. Shapes, distant. They don't approach. They watch from a distance you can't close. Whatever is here isn't ready for you, and you don't have time to wait for it.</p>
-        <p>On the twelfth day, the probe data package is as complete as it's going to be. You assemble the crew. What happens next is what you came for.</p>
-      `;
-    },
-    choicesFn(s) {
-      const trueEnd = s.mara === 'alive' && s.yusuf === 'alive'
-                   && s.cooperation >= 3 && s.investigatedSignal;
-      if (trueEnd) {
-        return [
-          {
-            text: 'Stay very still. Let it decide.',
-            target: 'p11_contact',
-            effect: st => { st.cooperation++; },
-          },
-          {
-            text: 'Slowly remove your helmet. Show vulnerability.',
-            target: 'p11_contact',
-            effect: st => { st.cooperation++; },
-          },
-          {
-            text: 'Signal Mara to activate the universal frequency protocol.',
-            target: 'p11_contact',
-            effect: st => { st.cooperation++; },
-          },
-        ];
-      }
-      return [
-        { text: 'Prepare the probe for launch.', target: 'p_probe' },
-      ];
-    },
-  },
-
-  p11_contact: {
-    act: 3,
-    title: 'First Contact',
-    text: `
-      <p>It takes four hours. Four hours of not moving, of speaking in low, even tones, of making yourselves as small and unthreatening as three humans in survival suits can be. Mara runs the frequency protocol on a loop. Yusuf keeps his hands visible and still. You hold eye contact — if those are eyes — and make no sudden moves.</p>
-      <p>It comes closer by degrees. The fear in it is visible in a way that transcends species — the way weight is carried, the way decisions are made millimeter by millimeter. You think of every account you've read of humans encountering something new and afraid, and you try to be the other version of that story.</p>
-      <p>When it finally comes close enough to touch, it doesn't touch you. It reaches past you and presses two flat digits against the side of the probe housing, feeling the metal. Looking at you. Back to the metal.</p>
-      <p>Mara, very quietly, says: "It knows what that is."</p>
-    `,
-    choices: [
-      { text: 'Continue.', target: 'p11_contact2' },
-    ],
-  },
-
-  p11_contact2: {
-    act: 3,
-    title: 'Understanding',
-    text: `
-      <p>Three more days. Communication, of a kind. Gesture and repetition and Mara's recorder playing back and the alien learning the difference between a question and a statement faster than any model predicted anything could.</p>
-      <p>On the third day, it leads you to a structure you had photographed but not entered, two kilometers from the camp. Inside is something that Yusuf identifies, slowly, disbelievingly, as a propellant storage system. High-density. He runs the calculations three times.</p>
-      <p>The alien stands beside the vessel and looks at you. It has understood something about what you are and where you came from and why that matters.</p>
-      <p>You don't fully understand how. But some things don't require understanding to be true.</p>
-    `,
-    choices: [
-      { text: 'Continue.', target: 'e5_true' },
-    ],
-  },
-
-  // ── PROBE LAUNCH ──────────────────────────────────────────
-
-  p_probe: {
-    act: 4,
-    title: 'The Probe',
-    textFn(s) {
-      const alive = (s.yusuf !== 'dead' ? 1 : 0) + (s.mara !== 'dead' ? 1 : 0);
-      const dataLine = alive === 2
-        ? 'The data package is comprehensive. Atmospheric analysis, geological survey, full biological assessment, subsurface chemistry — eleven days of work, catalogued and encrypted.'
-        : alive === 1
-        ? 'The data package is incomplete in places — one set of hands instead of two, some measurements not cross-checked, some days where the survey stopped. But it exists. It\'s real and it\'s aimed at Earth.'
-        : 'The data package is thin. You\'ve done what you could alone. It\'s not everything they hoped for, but it\'s something — more than silence.';
-
-      const deathLine = s.irradiated
-        ? 'You already know, from the document in your medical file, that the radiation exposure settled the question of whether you were coming home. You\'ve known for eight months. It changes the act of launching the probe from sacrifice to simply — completion.'
-        : 'You have what you came for.';
-
-      return `
-        <p>${dataLine}</p>
-        <p>${deathLine}</p>
-        <p>You watch the probe's thruster signature until it disappears against the stars.</p>
-      `;
-    },
-    choicesFn(s) {
-      const alive = (s.yusuf !== 'dead' ? 1 : 0) + (s.mara !== 'dead' ? 1 : 0);
-      const target = alive === 2 ? 'e4_success' : alive === 1 ? 'e3_partial' : 'e2_negative';
-      return [{ text: 'Launch the probe.', target }];
-    },
-  },
-
-  // ── ENDINGS ───────────────────────────────────────────────
-
-  e1_lost: {
-    act: 4,
-    isEnding: true,
-    endingType: 'failure',
-    endingLabel: 'Ending One',
-    title: 'Lost in Transit',
-    text: `
-      <p>You brace the ship. Everyone straps in. Mara runs system after system, looking for something that will help. Yusuf goes silent in the way he goes silent when the math has resolved and the answer is one he doesn't want to give you.</p>
-      <p>The storm takes eleven minutes to breach the engine housing. After that, the cascade is fast.</p>
-      <p>The last thing that works is the communications array, briefly. Yusuf gets it running on emergency power and fires one burst — no message, just the mission signature frequency, once, so that if anyone is listening they'll know where you were.</p>
-      <p>Then the power goes. Then the heat. The stars don't move.</p>
-      <p>Earth never hears back.</p>
-    `,
-  },
-
-  e2_negative: {
-    act: 4,
-    isEnding: true,
-    endingType: 'failure',
-    endingLabel: 'Ending Two',
-    title: 'Negative Findings',
-    text: `
-      <p>You are the last one standing when the probe goes up. The data is compromised — not falsified, not fabricated, but incomplete in ways that matter. Without Mara's biological survey to contextualize what you found, the planetary assessment is ambiguous at best.</p>
-      <p>The probe carries what you have. A partial picture. Some of what Earth needs and not enough of the rest.</p>
-      <p>You sit with your back against the ship hull and watch the probe track disappear and think about what they'll do with ambiguous data. Probably nothing. Probably panic. Probably exactly what people do when they're given a maybe when they needed a yes.</p>
-      <p>You did what you could. The universe is not required to make that sufficient.</p>
-    `,
-  },
-
-  e3_partial: {
-    act: 4,
-    isEnding: true,
-    endingType: 'partial',
-    endingLabel: 'Ending Three',
-    title: 'Partial Success',
-    textFn(s) {
-      const survivor = s.yusuf !== 'dead' ? 'Yusuf' : 'Mara';
-      const lost     = s.yusuf === 'dead' ? 'Yusuf' : 'Mara';
-      return `
-        <p>${survivor} stands with you when the probe launches. You don't speak. There's an understanding between you that doesn't need language anymore — fifteen years and a planet and the weight of ${lost}'s absence have collapsed the distance between two people who started as colleagues and ended as something the vocabulary doesn't quite have a word for.</p>
-        <p>The data package is good. Not everything, but solid — enough to build an argument on. Earth will have to decide what to do with it.</p>
-        <p>The probe climbs until the thruster burns out and it goes dark against the stars.</p>
-        <p>You turn back to the ship. There's nothing to go back to, but you go back anyway, because that's what you do when the thing you came to do is done.</p>
-      `;
-    },
-  },
-
-  e4_success: {
-    act: 4,
-    isEnding: true,
-    endingType: 'success',
-    endingLabel: 'Ending Four',
-    title: 'Mission Success',
-    textFn(s) {
-      const close = s.irradiated
-        ? "You won't make the trip home. You already knew that. The probe will have to be enough — and it is. It's more than enough."
-        : "The probe is the last act. Everything else is waiting.";
-      return `
-        <p>The three of you watch the probe launch from outside the ship. Yusuf has one hand on Mara's shoulder. Mara has her recorder in her hand, not running — she just has it there, the weight of it, like a talisman.</p>
-        <p>Comprehensive data. Full atmospheric analysis. Full biological survey. Geological survey. Subsurface readings. Enough to build a roadmap to this place for the next ship, and the one after that, and the hundred thousand after that if it comes to it.</p>
-        <p>${close}</p>
-        <p>Somewhere, in fifteen years, Earth will receive a signal. And in it — clean, clear, authenticated — will be everything they need to know that there is somewhere to go.</p>
-        <p>The probe climbs. The three of you watch until it disappears. Then Mara starts her voice journal. Then Yusuf goes to check a system he doesn't need to check. Then you stay there a moment longer, alone under an alien sky, thinking about nothing in particular.</p>
-        <p>It's enough.</p>
-      `;
-    },
-  },
-
-  e5_true: {
-    act: 4,
-    isEnding: true,
-    endingType: 'true-end',
-    endingLabel: 'True Ending',
-    title: 'First Contact',
-    text: `
-      <p>You launch the probe with the alien watching. It observes the whole sequence with the intense focused attention it brings to everything — the instruments, the handshakes, the meal you shared on the second day, the way Mara cried briefly and privately on the third morning and the alien had noticed and, without any shared language for it, had simply stayed nearby.</p>
-      <p>The probe carries everything: atmospheric data, the biological survey, geological findings, and seventeen gigabytes of documentation on first contact with an intelligent non-human species. Earth will receive it in fifteen years.</p>
-      <p>And then the alien shows you the propellant vessel again. Points at the ship. Points at the sky. Points at you.</p>
-      <p>Yusuf looks at the fuel readings. He does the math twice. Then he laughs — a real laugh, the first in a long time — and says: "We can make it home."</p>
-      <p>The journey back takes fifteen years. You spend most of it in the kind of silence that has stopped being empty.</p>
-      <p>When you see the sun again, it is smaller than you remember, and dimmer, and beautiful.</p>
-    `,
-  },
-};
-
-// ────────────────────────────────────────────────────────────
-// ENGINE
-// ────────────────────────────────────────────────────────────
-
-function resolveText(page) {
-  return page.textFn ? page.textFn(S) : (page.text || '');
-}
-
-function resolveChoices(page) {
-  return page.choicesFn ? page.choicesFn(S) : (page.choices || []);
-}
-
-function renderCrewStatus() {
-  const el = document.getElementById('crew-status');
-  const page = PAGES[S.page];
-  if (!el || (page && page.isEnding)) { el && (el.innerHTML = ''); return; }
-
-  const fmt = (name, status) => {
-    const cls  = status === 'alive'   ? 'crew-alive'
-               : status === 'injured' ? 'crew-injured'
-               :                        'crew-dead';
-    const mark = status === 'alive'   ? '&#9679; Alive'
-               : status === 'injured' ? '&#9680; Injured'
-               :                        '&#9675; Lost';
-    return `<div class="${cls}">${name.toUpperCase()} ${mark}</div>`;
-  };
-
-  el.innerHTML = fmt('Yusuf', S.yusuf) + fmt('Mara', S.mara);
-}
-
-function renderPage(pageId) {
-  const page = PAGES[pageId];
-  if (!page) { console.error('Missing page:', pageId); return; }
-
-  // Run enter hook (modifies state before render)
-  if (page.enter) page.enter(S);
-
-  S.page = pageId;
-
-  renderCrewStatus();
-
-  const actEl = document.getElementById('footer-act');
-  if (actEl) actEl.textContent = ACT[page.act] || '';
-
-  // Dev mode panel — show cooperation score when ?dev=1 is in the URL
-  const devPanel = document.getElementById('dev-panel');
-  if (devPanel) {
-    const isDev = new URLSearchParams(window.location.search).get('dev') === '1';
-    devPanel.style.display = isDev ? 'block' : 'none';
-    if (isDev) {
-      devPanel.innerHTML =
-        `COOP: ${S.cooperation}/6 &nbsp;|&nbsp; ` +
-        `SIGNAL: ${S.investigatedSignal ? 'YES' : 'NO'} &nbsp;|&nbsp; ` +
-        `PAGE: ${pageId}`;
-    }
-  }
-
-  const text    = resolveText(page);
-  const choices = resolveChoices(page);
-
-  let html = '<div class="page-wrap">';
-
-  if (page.act) {
-    html += `<div class="act-label">${ACT[page.act]}</div>`;
-  }
-
-  if (page.isEnding) {
-    const cls = page.endingType || 'failure';
-    html += `<div class="ending-label ${cls}">${page.endingLabel || 'Ending'}</div>`;
-    html += `<h1 class="ending-title">${page.title}</h1>`;
-    html += `<div class="page-text">${text}</div>`;
-    html += `<div class="ending-divider"></div>`;
-    html += `<button class="restart-btn" id="restart-btn">Begin again</button>`;
-  } else {
-    if (page.title) html += `<h1 class="page-title">${page.title}</h1>`;
-    html += `<div class="page-text">${text}</div>`;
-    if (choices.length) {
-      html += '<div class="choices">';
-      choices.forEach((c, i) => {
-        html += `<button class="choice-btn" data-idx="${i}">${c.text}</button>`;
-      });
-      html += '</div>';
-    }
-  }
-
-  html += '</div>';
-
-  const root = document.getElementById('page-root');
-  root.innerHTML = html;
-
-  root.querySelectorAll('.choice-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const idx    = parseInt(btn.dataset.idx, 10);
-      const choice = resolveChoices(PAGES[S.page])[idx];
-      if (!choice) return;
-      if (choice.effect) choice.effect(S);
-      renderPage(choice.target);
-    });
-  });
-
-  const restartBtn = document.getElementById('restart-btn');
-  if (restartBtn) {
-    restartBtn.addEventListener('click', () => { resetState(); renderPage('p01'); });
-  }
-
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// Start
-renderPage('p01');
-</script>
 </body>
 </html>
