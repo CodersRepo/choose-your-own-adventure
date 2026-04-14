@@ -1,129 +1,124 @@
-# ToDo: AI Task List
+# To-Do — Choose Your Own Adventure: *Last Light*
 
-This file contains tasks for AI to complete. Read `Codebase.md` first before starting any task.
-
----
-
-## Priority 1: Data Pipeline — Convert Existing Assets to Web-Ready JSON
-
-- [x] **Generate `story-data.json`**
-  - Read all `.txt` files from `output/cot-pages-ocr-v2/`
-  - Parse `output/cot-story-graph.mmd` to extract edges (choices and targets)
-  - Detect terminal pages (nodes with no outgoing edges)
-  - Detect trunk pages (pages on the main path from page 2)
-  - Output: `docs/story-data.json` with structure:
-    ```json
-    {
-      "title": "The Cave of Time",
-      "startPage": 2,
-      "pages": {
-        "2": {
-          "id": 2,
-          "text": "...",
-          "choices": [{ "text": "...", "target": 4 }],
-          "isTerminal": false,
-          "isTrunk": true
-        }
-      }
-    }
-    ```
+> This project has two parallel tracks:
+> 1. **The Game** — an original CYOA story (the dying-sun space mission from Brainstorm.md)
+> 2. **The Platform** — a web-based authoring + reader tool (per Fork-Instructions.md)
+>
+> Work on the game first to validate the platform's requirements.
 
 ---
 
-## Priority 2: Reader Mode — Core Web Interface
+## Track 1 — Story Design & Writing
 
-- [x] **Create `docs/index.html`** — main entry point with reader mode
-  - Load `story-data.json` via `fetch()`
-  - Display story page text
-  - Render choice buttons
-  - Navigate between pages on button click
-  - Show "The End" page for terminal nodes
-  - Include "Start Over" button
+### 1.1 Resolve Open Questions (before writing)
+- [x] Name the two crewmates and write a 1-paragraph backstory for each — **Yusuf Osei** (Engineer) and **Mara Chen** (Biologist). See `Brainstorm.md`.
+- [x] Decide what causes the sun decay — **Natural entropy**, unexplained and nobodyless.
+- [x] Define the alien species — **Afraid of you**. Small, watching. Trust earned through restraint and patience.
+- [x] Decide how the player earns the alien's trust — hidden **cooperation score** (≥3) + signal investigated + both crew alive.
+- [x] Lock the planet name — **Planet Solace** (KOI-3284b, star HR 7672).
+- [x] Choose the medium — **Static HTML** in `docs/lastlight.html`.
+- [x] Decide tone — **Gritty sci-fi realism** (*The Martian* / *Annihilation*).
 
-- [x] **Create `docs/style.css`** — visual styling
-  - Book/parchment aesthetic for reader
-  - Clean readable typography (serif font for story text)
-  - Responsive layout (mobile-friendly)
-  - Styled choice buttons
+### 1.2 Design the Choice Architecture
+- [x] Map out all major decision points across the 4 acts — **20 nodes** across 4 acts. See `Codebase.md` story map.
+- [x] Assign each decision point a page/node ID — `p01`–`p11`, `p_probe`, `e1`–`e5`. See story map.
+- [x] Define which decisions risk crewmate lives and which protect them — see `Brainstorm.md` mechanical notes.
+- [x] Define the hidden "cooperation track" conditions required to unlock the True Ending — 4 opportunities, need ≥3.
+- [x] Story graph documented in `Brainstorm.md` and `Codebase.md`.
+- [x] Every path leads to one of the 5 defined endings.
 
-- [x] **Create `docs/reader.js`** — reader logic
-  - Load and parse `story-data.json`
-  - Manage current page state
-  - Handle choice navigation
-  - Track visited pages (for breadcrumb / revisit detection)
-  - Save progress to `localStorage`
+### 1.3 Write Act 1 — Departure
+- [x] p01 — Opening: the dying sun, mission briefing
+- [x] p02 — Meet Yusuf and Mara; resource allocation choice
+- [x] p03 — Launch sequence
 
----
+### 1.4 Write Act 2 — The Journey (15 Years in Transit)
+- [x] p04 / p04_you / p04_yusuf — Year 3 oxygen recycler breach; EVA choice; Yusuf's potential injury
+- [x] p05 / p05a — Year 7 mysterious signal; investigation or ignore
+- [x] p06 / p06a — Year 12 rationing crisis; equal or Mara's plan
+- [x] p07 / p07_yusuf / p07_mara / p07_you — Year 14 particle storm; four choices, one ending
+- [x] Cooperation track choices woven throughout Act 2
+- [x] Mid-journey anomaly (p05a) hints at alien presence
 
-## Priority 3: Graph Visualization
+### 1.5 Write Act 3 — Arrival at Planet Solace
+- [x] p08 — Year 15 orbital approach
+- [x] p09 — First steps on the surface
+- [x] p10 / p10_defense — The Markings; 3 choices, aggressive path risks Mara
+- [x] p11 — Final survey; True Ending gate or standard path
+- [x] p11_contact / p11_contact2 — First contact scene (True Ending only)
 
-- [ ] **Create `docs/graph.html`** (or a tab in `index.html`)
-  - Load `story-data.json`
-  - Render interactive story graph using D3.js
-  - Color-code nodes: terminal (red/green), trunk (blue), regular (gray)
-  - Click a node to jump to that page in reader mode
-  - Highlight the reader's current path through the graph
-  - Zoom and pan support
+### 1.6 Write Act 4 — Endings
+- [x] Ending 1 (e1_lost): *Lost in Transit* — hold position during storm, ship destroyed
+- [x] Ending 2 (e2_negative): *Negative Findings* — both crew dead, ambiguous data
+- [x] Ending 3 (e3_partial): *Partial Success* — one crewmate alive, partial data
+- [x] Ending 4 (e4_success): *Mission Success* — both alive, full data
+- [x] Ending 5 (e5_true): *First Contact* — alien provides fuel, crew makes it home
 
-- [ ] **Create `docs/graph.js`** — graph rendering logic
-  - Parse pages + choices into D3 force-directed or dagre layout
-  - Draw edges as arrows with choice labels
-  - Handle node click events
-
----
-
-## Priority 4: Authoring Tool
-
-- [ ] **Create `docs/author.html`** — authoring interface
-  - Split-pane layout: graph on left, editor on right
-  - Toolbar: New Page, Export JSON, Story Stats
-
-- [ ] **Create `docs/author.js`** — authoring logic
-  - Load `story-data.json` as editable state
-  - Click node to open editor panel
-  - Edit page text
-  - Add/remove/edit choices (with target page selector)
-  - Mark page as terminal
-  - Add new page node
-  - Draw new edges by dragging between nodes
-  - Export/download updated `story-data.json`
+### 1.7 Story Review
+- [ ] Play-test every major path end-to-end
+- [ ] Verify crew survival state is tracked correctly across all branches
+- [ ] Verify True Ending is only reachable via correct conditions
+- [ ] Proofread all prose
 
 ---
 
-## Priority 5: Deployment
+## Track 2 — Story Graph & Scripts
 
-- [ ] **Set up GitHub Pages deployment**
-  - Move all web assets into `docs/` or `docs/` directory
-  - Enable GitHub Pages from repo settings (source: `docs/` or `main` branch root)
-  - Confirm live URL and test all features
+### 2.1 Adapt Existing Scripts for the New Story
+- [ ] Decide whether to reuse `build_story_graph.py` or write a new graph builder for hand-authored pages
+- [ ] Write a graph builder that reads the new story's page files and extracts "turn to page X" edges
+- [ ] Generate `output/lastlight-story-graph.mmd` from the new page files
+- [ ] Render `output/lastlight-story-graph.svg` using `render_story_graph_svg.py`
+- [ ] Add a `crewmate_alive` edge label/color scheme to distinguish safe vs. deadly branches
 
-- [ ] **Update `README.md`**
-  - Add deployed website URL
-  - Add GitHub repository URL
-  - Add team member names and contributions
-
----
-
-## Priority 6: Polish & Extras (Stretch Goals)
-
-- [ ] OCR cleanup — manually fix most common OCR errors in page text
-- [ ] Add story statistics page: total endings, average path length, longest/shortest story
-- [ ] Add a "random story" feature — auto-navigate randomly to an ending
-- [ ] Animate page transitions in reader mode
-- [ ] Mobile swipe gesture support for navigation
-- [ ] Dark mode toggle
-- [ ] Print-friendly story output (full path as a document)
-- [ ] Allow uploading a custom story JSON to use the reader with other stories
+### 2.2 Validate the Story Graph
+- [ ] Confirm all 5 endings appear as terminal nodes
+- [ ] Confirm no unintended orphan nodes or dead ends exist
+- [ ] Confirm the True Ending node is only reachable through the cooperation-track path
+- [ ] Run `write_all_stories.py` equivalent on the new graph to enumerate all possible playthroughs
 
 ---
 
-## Notes for AI
+## Track 3 — Web Platform (Authoring + Reader)
 
-- Always read `Codebase.md` at the start of a session
-- The canonical story page text is in `output/cot-pages-ocr-v2/*.txt`
-- The story graph is in `output/cot-story-graph.mmd`
-- All web output should go into a `docs/` directory
-- Use vanilla JavaScript (no frameworks) unless there is a strong reason
-- Use D3.js v7 from CDN for graph visualization
-- Prefer `fetch()` over XMLHttpRequest
-- Data file should be `docs/story-data.json`, generated by a new script `scripts/generate_web_data.py`
+### 3.1 Reader Interface
+- [x] Design the reader UI: dark gritty space aesthetic, Georgia serif body text
+- [x] Implement static-HTML reader (`docs/lastlight.html`, fully self-contained)
+- [x] Crew survival tracker (top-right, color-coded: alive/injured/lost)
+- [ ] Add a "cooperation track" dev indicator (visible only in dev mode / URL param)
+- [x] Styled to match the gritty tone of the story
+
+### 3.2 Authoring Tool (from Fork-Instructions.md)
+- [ ] Design the authoring UI: upload a page, define choices, link to other pages
+- [ ] Implement interactive story graph visualization (click a node to edit that page)
+- [ ] Highlight unfinished/orphan nodes so authors can see what's incomplete
+- [ ] Highlight terminal/ending nodes distinctly
+- [ ] Support importing the existing Mermaid `.mmd` graph format
+- [ ] Support exporting the story graph as SVG and as a playable HTML reader
+
+### 3.3 Infrastructure
+- [ ] Choose a tech stack for the web app (e.g. Next.js, plain HTML/JS, etc.)
+- [ ] Set up project scaffolding and a `package.json` / `requirements.txt`
+- [ ] Deploy a live demo (GitHub Pages, Vercel, or similar)
+
+---
+
+## Track 4 — Documentation & Housekeeping
+
+- [ ] Update `README.md` to mention the new original story project alongside Cave of Time
+- [x] Update `Codebase.md` with Last Light game architecture, story map, and state model
+- [ ] Add a `CHANGELOG.md` entry when major milestones are hit
+- [ ] Keep `AI-Instructions.md` up to date with each session's instructions (per existing convention)
+
+---
+
+## Priority Order (suggested)
+
+1. Resolve open questions (1.1)
+2. Design choice architecture + story graph sketch (1.2)
+3. Write Act 1 & 2 (1.3, 1.4)
+4. Build story graph from new pages (2.1, 2.2)
+5. Write Act 3 & 4 / all endings (1.5, 1.6)
+6. Story review (1.7)
+7. Static HTML reader (3.1)
+8. Authoring tool (3.2, 3.3)
